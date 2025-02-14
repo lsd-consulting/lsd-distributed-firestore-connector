@@ -21,9 +21,9 @@ jobs:
       codecov-path: '**/build/reports/jacoco/test/jacocoTestReport.xml'
       artifact-path: '**/build/reports'
     secrets: inherit
-  release:
-    needs: build
-    uses: lsd-consulting/shared-workflows/.github/workflows/release.yml@main
-    with:
-      java-version: '17'
-    secrets: inherit
+#  release:
+#    needs: build
+#    uses: lsd-consulting/shared-workflows/.github/workflows/release.yml@main
+#    with:
+#      java-version: '17'
+#    secrets: inherit
