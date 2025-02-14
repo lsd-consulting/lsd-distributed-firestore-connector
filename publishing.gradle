@@ -1,0 +1,101 @@
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+    archiveClassifier = ""
+}
+
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+tasks.register('javadocJar', Jar) {
+    archiveClassifier.set('javadoc')
+    from javadoc
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = "$group"
+            artifactId = 'lsd-distributed-firestore-connector'
+            version = "$version"
+
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'lsd-distributed-firestore-connector'
+                description = 'This is a PostgreSQL version of the data connector for the distributed data storage.'
+                url = 'https://github.com/lsd-consulting/lsd-distributed-firestore-connector'
+                licenses {
+                    license {
+                        name = "The Apache Software License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        distribution = "repo"
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Alex Schiff'
+                        email = 'alex.schiff@protonmail.com'
+                    }
+                    developer {
+                        name = 'Lukasz'
+                        email = 'lukasz.gryzbon@gmail.com'
+                        organization = 'Integreety Ltd.'
+                        organizationUrl = 'https://www.integreety.co.uk'
+                    }
+                    developer {
+                        name = 'Nick'
+                        email = "nicholas.mcdowall@gmail.com"
+                        organization = 'NKM IT Solutions'
+                        organizationUrl = 'https://github.com/nickmcdowall'
+                    }
+                }
+                scm {
+                    url = "https://github.com/lsd-consulting/lsd-distributed-firestore-connector.git"
+                }
+            }
+            repositories {
+                maven {
+                    name = 'sonatype'
+                    url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    credentials(PasswordCredentials)
+                }
+            }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+
+signing {
+    if (project.findProperty("signingKey")) {
+        // Use in-memory ascii-armored keys
+        def signingKey = findProperty("signingKey")
+        def signingPassword = findProperty("signingPassword")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign publishing.publications.mavenJava
+    } else {
+        // Use signing properties in ~/.gradle/gradle.properties
+        sign publishing.publications.mavenJava
+    }
+}

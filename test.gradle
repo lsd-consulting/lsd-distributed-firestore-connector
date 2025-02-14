@@ -1,0 +1,27 @@
+dependencies {
+    // Spring
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Other
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'io.github.k-random:k-random-core:1.29.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.events("skipped", "failed")
+    systemProperty("lsd.core.report.outputDir", "$buildDir/reports/lsd")
+    finalizedBy jacocoTestReport
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            logger.lifecycle("Test results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
+            if (result.testCount == 0) {
+                throw new IllegalStateException("No tests were found. Failing the build")
+            }
+        }
+    }
+}
+
+compileTestKotlin.kotlinOptions.jvmTarget = "17"

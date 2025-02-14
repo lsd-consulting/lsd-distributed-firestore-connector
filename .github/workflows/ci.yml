@@ -1,0 +1,29 @@
+# This workflow will build a Java project with Gradle then perform an automated release
+# For more information see:
+#  https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+#  https://github.com/marketplace/actions/action-for-semantic-release
+
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    uses: lsd-consulting/shared-workflows/.github/workflows/build.yml@main
+    with:
+      operating-system: ubuntu-22.04
+      java-version: '17'
+      codecov: true
+      codecov-path: '**/build/reports/jacoco/test/jacocoTestReport.xml'
+      artifact-path: '**/build/reports'
+    secrets: inherit
+#  release:
+#    needs: build
+#    uses: lsd-consulting/shared-workflows/.github/workflows/release.yml@main
+#    with:
+#      java-version: '17'
+#    secrets: inherit
