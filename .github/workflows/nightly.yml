@@ -1,0 +1,12 @@
+name: Nightly Build
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *' # run at 2 AM UTC
+jobs:
+  build:
+    uses: lsd-consulting/shared-workflows/.github/workflows/build.yml@main
+    with:
+      operating-system: ubuntu-22.04
+      java-version: '17'
+      artifact-path: '**/build/reports'
