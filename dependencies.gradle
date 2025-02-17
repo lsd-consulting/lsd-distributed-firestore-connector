@@ -3,8 +3,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.4.3'
 
     // LSD
-    api 'io.github.lsd-consulting:lsd-distributed-connector:2.0.8'
-    implementation 'io.github.lsd-consulting:lsd-logging-library:1.0.14'
+    api 'io.github.lsd-consulting:lsd-distributed-connector:2.0.11'
+    implementation 'io.github.lsd-consulting:lsd-logging-library:1.0.18'
 
     // Spring
     compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
