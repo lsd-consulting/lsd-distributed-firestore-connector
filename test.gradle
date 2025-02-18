@@ -1,27 +1,36 @@
 dependencies {
     // Spring
+    testImplementation 'org.springframework.boot:spring-boot-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
 
     // Other
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'ch.qos.logback:logback-core'
     testImplementation 'io.github.k-random:k-random-core:1.29.3'
+    testImplementation 'io.kotest:kotest-assertions-core:5.9.1'
+    testImplementation 'io.mockk:mockk:1.13.16'
+    testImplementation 'org.apache.commons:commons-lang3'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation 'org.testcontainers:gcloud'
+    testImplementation 'org.testcontainers:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
     useJUnitPlatform()
-    testLogging.events("skipped", "failed")
-    systemProperty("lsd.core.report.outputDir", "$buildDir/reports/lsd")
+    testLogging.events('skipped', 'failed')
+    systemProperty('lsd.core.report.outputDir', "$buildDir/reports/lsd")
     finalizedBy jacocoTestReport
     afterSuite { desc, result ->
         if (!desc.parent) {
             logger.lifecycle("Test results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)")
             if (result.testCount == 0) {
-                throw new IllegalStateException("No tests were found. Failing the build")
+                throw new IllegalStateException('No tests were found. Failing the build')
             }
         }
     }
 }
 
-compileTestKotlin.kotlinOptions.jvmTarget = "17"
+compileTestKotlin.kotlinOptions.jvmTarget = '17'

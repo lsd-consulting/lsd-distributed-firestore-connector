@@ -14,58 +14,50 @@
 
 This is a Firestore version of the data connector for the distributed data storage.
 
-## Modes
-
-To cater for various usage scenarios, the connector can be initialised in two modes based on the values of
-the `failOnConnectionError` parameter:
-
-- false - if the connector fails to connect on start up, it will silently swallow the exception and set the connector to
-  the `inactive` mode.
-  This means all queries for storing interactions will be ignored. This is the default behaviour and should be used when
-  the main role of the connector is to capture interactions.
-- true - if the connector fails to connect on start up, it will throw an exception preventing the startup of the
-  application.
-  This is a useful mode for applications that rely on the connector for their critical functionality, eg.
-  the `lsd-dostributed-generator-ui`.
-
 ## Connection
 
-The connector accepts a connection string as the value of the `lsd.dist.connectionString` property from the
-`lsd-distributed-connector` library.
-For example:
+By default, the connector connects to the default Firestore database in Google Cloud Platform, which is named
+`(default)`; as a reminder, this is the free-tier eligible Firestore database. This can be overridden by setting the
+property `lsd.dist.connectionString`:
 
 ```properties
-lsd.dist.connectionString=jdbc:postgresql://localhost:5432/lsd_database?user=sa&password=sa&useUnicode=true&characterEncoding=UTF-8
+lsd.dist.connectionString=myDatabaseName
 ```
 
-However, if the connection requires a more complicated setup, the connector is able to pick up a `DataSource` bean.
-In this case the above property needs to be set to `dataSource`. For example:
+## GCP Settings
 
-```properties
-lsd.dist.connectionString=dataSource
-spring.datasource.url=jdbc:postgresql://localhost:5432/lsd_database?user=sa&password=sa&useUnicode=true&characterEncoding=UTF-8
-```
+If you have any of the Spring Cloud GCP java dependencies (ex.
+`implementation 'com.google.cloud:spring-cloud-gcp-core:x.x.x'`), the property `spring.cloud.gcp.project-id` will be
+autoconfigured when running in a GCP compute environment (ex. GCP Cloud Run). Similarly, the `GoogleCredentials` bean
+will be autowired in a GCP compute environment. If you are running into a situation where you need to utilize this
+library outside of a GCP compute environment, you must provide the project id through the property
+`spring.cloud.gcp.project-id` and provide a `GoogleCredentials` bean.
 
 ## Properties
 
 The following properties can be overridden by setting a System property.
 
-| Property Name                              | Default | Description                                                                      |
-|--------------------------------------------|---------|----------------------------------------------------------------------------------|
-| lsd.dist.db.failOnConnectionError          | false   | See [Modes](#Modes) for details.                                                 |
-| lsd.dist.db.traceIdMaxLength               | 32      | To prevent insertion issues the trace id will be trimmed to this length          |
-| lsd.dist.db.bodyMaxLength                  | 10000   | To prevent insertion issues the body will be trimmed to this length              |
-| lsd.dist.db.requestHeadersMaxLength        | 10000   | To prevent insertion issues the request headers will be trimmed to this length   |
-| lsd.dist.db.responseHeadersMaxLength       | 10000   | To prevent insertion issues the response headers will be trimmed to this length  |
-| lsd.dist.db.serviceNameMaxLength           | 200     | To prevent insertion issues the service name will be trimmed to this length      |
-| lsd.dist.db.targetMaxLength                | 200     | To prevent insertion issues the target name will be trimmed to this length       |
-| lsd.dist.db.pathMaxLength                  | 200     | To prevent insertion issues the path will be trimmed to this length              |
-| lsd.dist.db.httpStatusMaxLength            | 35      | To prevent insertion issues the HTTP status value will be trimmed to this length |
-| lsd.dist.db.httpMethodMaxLength            | 7       | To prevent insertion issues the HTTP method will be trimmed to this length       |
-| lsd.dist.db.profileMaxLength               | 20      | To prevent insertion issues the profile name will be trimmed to this length      |
-| lsd.dist.db.maxNumberOfInteractionsToQuery | 100     | To prevent query timeouts when dealing with large data sets                      |
+| Property Name                              | Default | Description                                                                                             |
+|--------------------------------------------|---------|---------------------------------------------------------------------------------------------------------|
+| lsd.dist.db.maxNumberOfInteractionsToQuery | 100     | To prevent query timeouts when dealing with large data sets                                             |
+| lsd.dist.db.timeToLiveDuration             | -1d     | If set to a positive duration, the column will be written with the value `createdAt` plus this duration |
 
 NOTE
-Make sure that the above `maxLength` values are not set greater than the values in
-the [prepareDatabase.sql](src/main/resources/db/prepareDatabase.sql) script.
 
+The admin repository is not currently implemented. Once more advanced querying capabilities are added to the Firestore
+client libraries, it will be implemented.
+
+The TTL column is set to be `expirationAt`. In order to enable the TTL column, either enable it through the GCP console
+or via terraform as shown below:
+
+```terraform
+resource "google_firestore_field" "timestamp" {
+  project    = "my-project-name"
+  database   = "(database)"
+  collection = "interceptedInteractions"
+  field      = "expirationAt"
+
+  # enables a TTL policy for the document based on the value of entries with this field
+  ttl_config {}
+}
+```

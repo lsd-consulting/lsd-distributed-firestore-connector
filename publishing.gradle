@@ -4,7 +4,7 @@ bootJar {
 
 jar {
     enabled = true
-    archiveClassifier = ""
+    archiveClassifier = ''
 }
 
 tasks.register('sourcesJar', Jar) {
@@ -36,13 +36,13 @@ publishing {
             artifact javadocJar
             pom {
                 name = 'lsd-distributed-firestore-connector'
-                description = 'This is a PostgreSQL version of the data connector for the distributed data storage.'
+                description = 'This is a Firestore version of the data connector for the distributed data storage.'
                 url = 'https://github.com/lsd-consulting/lsd-distributed-firestore-connector'
                 licenses {
                     license {
-                        name = "The Apache Software License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                        distribution = "repo"
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
                     }
                 }
                 developers {
@@ -64,7 +64,7 @@ publishing {
                     }
                 }
                 scm {
-                    url = "https://github.com/lsd-consulting/lsd-distributed-firestore-connector.git"
+                    url = 'https://github.com/lsd-consulting/lsd-distributed-firestore-connector.git'
                 }
             }
             repositories {
@@ -81,17 +81,17 @@ publishing {
 nexusPublishing {
     repositories {
         sonatype {  //only for users registered in Sonatype after 24 Feb 2021
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            nexusUrl.set(uri('https://s01.oss.sonatype.org/service/local/'))
+            snapshotRepositoryUrl.set(uri('https://s01.oss.sonatype.org/content/repositories/snapshots/'))
         }
     }
 }
 
 signing {
-    if (project.findProperty("signingKey")) {
+    if (project.findProperty('signingKey')) {
         // Use in-memory ascii-armored keys
-        def signingKey = findProperty("signingKey")
-        def signingPassword = findProperty("signingPassword")
+        def signingKey = findProperty('signingKey')
+        def signingPassword = findProperty('signingPassword')
         useInMemoryPgpKeys(signingKey, signingPassword)
         sign publishing.publications.mavenJava
     } else {
