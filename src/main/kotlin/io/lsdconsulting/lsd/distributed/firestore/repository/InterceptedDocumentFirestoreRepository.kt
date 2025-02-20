@@ -16,8 +16,8 @@ class InterceptedDocumentFirestoreRepository(
     override fun save(interceptedInteraction: InterceptedInteraction) {
         if (isActive()) {
             try {
-                collection.document(UUID.randomUUID().toString()).set(interceptedInteraction.toMap(timeToLiveDuration))
-                    .get()
+                val id = UUID.randomUUID().toString() // create an id for the new record
+                collection.document(id).set(interceptedInteraction.toMap(timeToLiveDuration)).get()
             } catch (e: ExecutionException) {
                 log().error(
                     "Skipping persisting the interceptedInteraction due to exception - interceptedInteraction:{}, message:{}, stackTrace:{}",
