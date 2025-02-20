@@ -6,6 +6,7 @@ import com.google.cloud.firestore.FirestoreOptions
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.cloud.FirestoreClient
+import io.lsdconsulting.lsd.distributed.firestore.repository.InterceptedDocumentFirestoreAdminRepository
 import io.lsdconsulting.lsd.distributed.firestore.repository.InterceptedDocumentFirestoreRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,6 +17,9 @@ const val DATABASE_NAME = "interceptedInteractions"
 
 @Configuration
 class LibraryConfig {
+    @Bean
+    fun interceptedDocumentFirestoreAdminRepository() = InterceptedDocumentFirestoreAdminRepository()
+
     @Bean
     fun interceptedDocumentFirestoreRepository(
         collection: CollectionReference,
