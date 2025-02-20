@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "lsd.dist.connectionString",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "lsd.dist.db.maxNumberOfInteractionsToQuery",
+      "type": "java.lang.Integer"
+    },
+    {
+      "name": "lsd.dist.db.timeToLiveDuration",
+      "type": "java.time.Duration"
+    }
+  ]
+}

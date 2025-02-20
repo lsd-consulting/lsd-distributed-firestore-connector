@@ -1,6 +1,6 @@
-task installGitHooks() {
-    shouldRunAfter("clean")
-    println "-- Configuring git to use .githooks --"
+tasks.register('installGitHooks') {
+    shouldRunAfter('clean')
+    logger.lifecycle('-- Configuring git to use .githooks --')
     project.exec {
         commandLine('git', 'config', 'core.hooksPath', '.githooks')
     }

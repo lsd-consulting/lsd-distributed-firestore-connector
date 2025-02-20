@@ -1,25 +1,25 @@
 import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
-    id 'org.springframework.boot' version '3.4.2'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.3.8'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'java-library'
     id 'maven-publish'
     id 'signing'
     id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
     id 'com.palantir.git-version' version '3.1.0'
     id 'jacoco'
-    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.10'
+    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.0.21'
 }
 
 group = 'io.github.lsd-consulting'
-version = gitVersion().replaceAll("^v", "")
+version = gitVersion().replaceAll('^v', '')
 println "Build Version = ${version}"
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
-compileKotlin.kotlinOptions.jvmTarget = "17"
+compileKotlin.kotlinOptions.jvmTarget = '17'
 
 repositories {
     mavenLocal()
@@ -35,7 +35,7 @@ jacocoTestReport {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    "io/lsdconsulting/lsd/distributed/config/**"
+                    'io/lsdconsulting/lsd/distributed/config/**'
             ])
         }))
     }
@@ -44,8 +44,7 @@ jacocoTestReport {
 apply plugin: 'io.spring.dependency-management'
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2024.0.0'
-        mavenBom 'io.pivotal.spring.cloud:spring-cloud-services-dependencies:4.2.0'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2023.0.3'
         mavenBom SpringBootPlugin.BOM_COORDINATES
     }
 }
