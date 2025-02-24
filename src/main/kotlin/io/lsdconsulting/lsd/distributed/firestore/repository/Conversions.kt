@@ -23,12 +23,14 @@ internal const val ELAPSED_TIME = "elapsedTime"
 internal const val CREATED_AT = "createdAt"
 internal const val EXPIRATION_AT = "expirationAt"
 internal const val ZONE = "zone"
+internal const val FORBIDDEN_REGEX = "__.*__"
+internal const val SANITIZED_REGEX = "_.*_"
 
 internal fun InterceptedInteraction.toMap(timeToLive: Duration) = mutableMapOf(
     TRACE_ID to traceId,
     BODY to body,
-    REQUEST_HEADERS to requestHeaders.map { it.key to it.value.toList() }.toMap(),
-    RESPONSE_HEADERS to responseHeaders.map { it.key to it.value.toList() }.toMap(),
+    REQUEST_HEADERS to requestHeaders.map { it.key.sanitize() to it.value.toList() }.toMap(),
+    RESPONSE_HEADERS to responseHeaders.map { it.key.sanitize() to it.value.toList() }.toMap(),
     SERVICE_NAME to serviceName,
     TARGET to target,
     PATH to path,
@@ -49,8 +51,10 @@ internal fun InterceptedInteraction.toMap(timeToLive: Duration) = mutableMapOf(
 internal fun Map<String, Any?>.toInterceptedInteraction() = InterceptedInteraction(
     traceId = this[TRACE_ID] as String,
     body = this[BODY] as String?,
-    requestHeaders = this[REQUEST_HEADERS] as Map<String, Collection<String>>,
-    responseHeaders = this[RESPONSE_HEADERS] as Map<String, Collection<String>>,
+    requestHeaders = (this[REQUEST_HEADERS] as Map<String, Collection<String>>).map { it.key.expand() to it.value }
+        .toMap(),
+    responseHeaders = (this[RESPONSE_HEADERS] as Map<String, Collection<String>>).map { it.key.expand() to it.value }
+        .toMap(),
     serviceName = this[SERVICE_NAME] as String,
     target = this[TARGET] as String,
     path = this[PATH] as String,
@@ -61,6 +65,12 @@ internal fun Map<String, Any?>.toInterceptedInteraction() = InterceptedInteracti
     elapsedTime = this[ELAPSED_TIME] as Long,
     createdAt = (this[CREATED_AT] as Timestamp).toZonedDateTime(ZoneId.of(this[ZONE] as String))
 )
+
+internal fun String.sanitize(): String =
+    if (this.matches(FORBIDDEN_REGEX.toRegex())) this.drop(1).dropLast(1) else this
+
+internal fun String.expand(): String =
+    if (this.matches(SANITIZED_REGEX.toRegex())) "_${this}_" else this
 
 internal fun ZonedDateTime.toTimestamp() = Timestamp.ofTimeSecondsAndNanos(this.toEpochSecond(), this.nano)
 
