@@ -186,13 +186,15 @@ internal class ConversionsKtTest {
         @JvmStatic
         private fun provideSanitizationStrings() = listOf(
             Arguments.of("test", "test"),
-            Arguments.of("__test__", "_test_"),
+            Arguments.of("_test_", "_test_"),
+            Arguments.of("__test__", "_test_")
         )
 
         @JvmStatic
         private fun provideExpansionStrings() = listOf(
             Arguments.of("test", "test"),
             Arguments.of("_test_", "__test__"),
+            Arguments.of("__test__", "___test___")
         )
     }
 }
