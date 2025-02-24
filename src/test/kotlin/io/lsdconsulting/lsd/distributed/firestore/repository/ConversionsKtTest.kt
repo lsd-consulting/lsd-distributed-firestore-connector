@@ -8,8 +8,7 @@ import io.kotest.matchers.maps.shouldMatchAll
 import io.kotest.matchers.shouldBe
 import io.lsdconsulting.lsd.distributed.connector.model.InteractionType
 import io.lsdconsulting.lsd.distributed.connector.model.InterceptedInteraction
-import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
-import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
+import org.apache.commons.lang3.RandomStringUtils.secure
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -26,7 +25,16 @@ internal class ConversionsKtTest {
     @ParameterizedTest
     @MethodSource("provideDurations")
     fun `should convert intercepted interaction to map`(duration: Duration) {
-        val interceptedInteraction = kRandom.nextObject(InterceptedInteraction::class.java)
+        val interceptedInteraction = kRandom.nextObject(InterceptedInteraction::class.java).copy(
+            requestHeaders = mapOf(
+                "good1" to listOf(secure().nextAlphanumeric(10)),
+                "__bad1__" to listOf(secure().nextAlphanumeric(10))
+            ),
+            responseHeaders = mapOf(
+                "good2" to listOf(secure().nextAlphanumeric(10)),
+                "__bad2__" to listOf(secure().nextAlphanumeric(10))
+            )
+        )
 
         val map = interceptedInteraction.toMap(duration)
 
@@ -34,11 +42,11 @@ internal class ConversionsKtTest {
             TRACE_ID to { it shouldBe interceptedInteraction.traceId },
             BODY to { it shouldBe interceptedInteraction.body },
             REQUEST_HEADERS to {
-                it shouldBe interceptedInteraction.requestHeaders.map { entry -> entry.key to entry.value.toList() }
+                it shouldBe interceptedInteraction.requestHeaders.map { entry -> entry.key.sanitize() to entry.value.toList() }
                     .toMap()
             },
             RESPONSE_HEADERS to {
-                it shouldBe interceptedInteraction.responseHeaders.map { entry -> entry.key to entry.value.toList() }
+                it shouldBe interceptedInteraction.responseHeaders.map { entry -> entry.key.sanitize() to entry.value.toList() }
                     .toMap()
             },
             SERVICE_NAME to { it shouldBe interceptedInteraction.serviceName },
@@ -67,25 +75,35 @@ internal class ConversionsKtTest {
 
     @Test
     fun `should convert map to intercepted interaction`() {
-        val traceId = randomAlphanumeric(10)
-        val body = randomAlphanumeric(10)
-        val requestHeaderKey = randomAlphanumeric(5)
-        val requestHeaderValue = listOf(randomAlphanumeric(10))
-        val responseHeaderKey = randomAlphanumeric(5)
-        val responseHeaderValue = listOf(randomAlphanumeric(10))
-        val serviceName = randomAlphabetic(10)
-        val target = randomAlphabetic(5)
-        val path = randomAlphabetic(5)
+        val traceId = secure().nextAlphanumeric(10)
+        val body = secure().nextAlphanumeric(10)
+        val normalRequestHeaderKey = secure().nextAlphanumeric(5)
+        val normalRequestHeaderValue = listOf(secure().nextAlphanumeric(10))
+        val sanitizedRequestHeaderKey = "_test1_"
+        val sanitizedRequestHeaderValue = listOf(secure().nextAlphanumeric(10))
+        val normalResponseHeaderKey = secure().nextAlphanumeric(5)
+        val normalResponseHeaderValue = listOf(secure().nextAlphanumeric(10))
+        val sanitizedResponseHeaderKey = "_test2_"
+        val sanitizedResponseHeaderValue = listOf(secure().nextAlphanumeric(10))
+        val serviceName = secure().nextAlphabetic(10)
+        val target = secure().nextAlphabetic(5)
+        val path = secure().nextAlphabetic(5)
         val httpStatus = "OK"
         val httpMethod = "POST"
-        val profile = randomAlphabetic(5)
+        val profile = secure().nextAlphabetic(5)
         val elapsedTime = kRandom.nextLong()
         val createdAt = Timestamp.of(kRandom.nextObject(Date::class.java))
         val map = mapOf(
             TRACE_ID to traceId,
             BODY to body,
-            REQUEST_HEADERS to mapOf(requestHeaderKey to requestHeaderValue),
-            RESPONSE_HEADERS to mapOf(responseHeaderKey to responseHeaderValue),
+            REQUEST_HEADERS to mapOf(
+                normalRequestHeaderKey to normalRequestHeaderValue,
+                sanitizedRequestHeaderKey to sanitizedRequestHeaderValue
+            ),
+            RESPONSE_HEADERS to mapOf(
+                normalResponseHeaderKey to normalResponseHeaderValue,
+                sanitizedResponseHeaderKey to sanitizedResponseHeaderValue
+            ),
             SERVICE_NAME to serviceName,
             TARGET to target,
             PATH to path,
@@ -103,8 +121,14 @@ internal class ConversionsKtTest {
         interceptedInteraction shouldBeEqual InterceptedInteraction(
             traceId = traceId,
             body = body,
-            requestHeaders = mapOf(requestHeaderKey to requestHeaderValue),
-            responseHeaders = mapOf(responseHeaderKey to responseHeaderValue),
+            requestHeaders = mapOf(
+                normalRequestHeaderKey.expand() to normalRequestHeaderValue,
+                sanitizedRequestHeaderKey.expand() to sanitizedRequestHeaderValue
+            ),
+            responseHeaders = mapOf(
+                normalResponseHeaderKey.expand() to normalResponseHeaderValue,
+                sanitizedResponseHeaderKey.expand() to sanitizedResponseHeaderValue
+            ),
             serviceName = serviceName,
             target = target,
             path = path,
@@ -117,6 +141,18 @@ internal class ConversionsKtTest {
                 Instant.ofEpochSecond(createdAt.seconds, createdAt.nanos.toLong()), ZoneId.of("UTC")
             )
         )
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideSanitizationStrings")
+    fun `should sanitize only when matching regex`(source: String, expected: String) {
+        source.sanitize() shouldBe expected
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideExpansionStrings")
+    fun `should expand only when matching regex`(source: String, expected: String) {
+        source.expand() shouldBe expected
     }
 
     @Test
@@ -145,6 +181,18 @@ internal class ConversionsKtTest {
         @JvmStatic
         private fun provideDurations() = listOf(
             Arguments.of(Duration.ofDays(-1L)), Arguments.of(Duration.ZERO), Arguments.of(Duration.ofDays(1L))
+        )
+
+        @JvmStatic
+        private fun provideSanitizationStrings() = listOf(
+            Arguments.of("test", "test"),
+            Arguments.of("__test__", "_test_"),
+        )
+
+        @JvmStatic
+        private fun provideExpansionStrings() = listOf(
+            Arguments.of("test", "test"),
+            Arguments.of("_test_", "__test__"),
         )
     }
 }
