@@ -27,11 +27,11 @@ lsd.dist.connectionString=myDatabaseName
 ## GCP Settings
 
 If you have any of the Spring Cloud GCP java dependencies (ex.
-`implementation 'com.google.cloud:spring-cloud-gcp-core:x.x.x'`), the property `spring.cloud.gcp.project-id` will be
-autoconfigured when running in a GCP compute environment (ex. GCP Cloud Run). Similarly, the `GoogleCredentials` bean
+`implementation 'com.google.cloud:spring-cloud-gcp-core:x.x.x'`), the `GcpProjectIdProvider` bean will be
+autoconfigured when running in a GCP compute environment (ex. GCP Cloud Run). Similarly, the `CredentialsProvider` bean
 will be autowired in a GCP compute environment. If you are running into a situation where you need to utilize this
-library outside of a GCP compute environment, you must provide the project id through the property
-`spring.cloud.gcp.project-id` and provide a `GoogleCredentials` bean.
+library outside a GCP compute environment, you must provide the project id through the property
+`spring.cloud.gcp.project-id` and provide a `CredentialsProvider` bean.
 
 ## Properties
 
@@ -51,9 +51,9 @@ The TTL column is set to be `expirationAt`. In order to enable the TTL column, e
 or via terraform as shown below:
 
 ```terraform
-resource "google_firestore_field" "timestamp" {
+resource "google_firestore_field" "expiration_at" {
   project    = "my-project-name"
-  database   = "(database)"
+  database   = "(default)"
   collection = "interceptedInteractions"
   field      = "expirationAt"
 

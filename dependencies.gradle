@@ -3,8 +3,9 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib'
 
-    // DB
-    implementation 'com.google.firebase:firebase-admin:9.4.3'
+    // GCP
+    compileOnly 'com.google.cloud:spring-cloud-gcp-core'
+    implementation 'com.google.cloud:google-cloud-firestore'
 
     // LSD
     api 'io.github.lsd-consulting:lsd-distributed-connector:2.0.11'

@@ -1,11 +1,9 @@
 package io.lsdconsulting.lsd.distributed.firestore.config
 
-import com.google.auth.oauth2.GoogleCredentials
+import com.google.api.gax.core.CredentialsProvider
 import com.google.cloud.firestore.CollectionReference
 import com.google.cloud.firestore.FirestoreOptions
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
-import com.google.firebase.cloud.FirestoreClient
+import com.google.cloud.spring.core.GcpProjectIdProvider
 import io.lsdconsulting.lsd.distributed.firestore.repository.InterceptedDocumentFirestoreAdminRepository
 import io.lsdconsulting.lsd.distributed.firestore.repository.InterceptedDocumentFirestoreRepository
 import org.springframework.beans.factory.annotation.Value
@@ -30,19 +28,18 @@ class LibraryConfig {
     @Bean
     fun collection(
         @Value("\${lsd.dist.connectionString:(default)}") databaseName: String,
-        @Value("\${spring.cloud.gcp.project-id}") projectId: String,
         @Value("\${spring.cloud.gcp.firestore.host-port:#{null}}") hostAndPort: String?,
-        credentials: GoogleCredentials
+        projectIdProvider: GcpProjectIdProvider,
+        credentialsProvider: CredentialsProvider
     ): CollectionReference {
-        try {
-            FirebaseApp.getInstance()
-        } catch (ex: IllegalStateException) {
-            val firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder().setCredentials(credentials)
+        val firestoreOptionsBuilder =
+            FirestoreOptions
+                .getDefaultInstance()
+                .toBuilder()
+                .setProjectId(projectIdProvider.projectId)
+                .setCredentialsProvider(credentialsProvider)
                 .setDatabaseId(databaseName)
-            hostAndPort?.let { firestoreOptions.setEmulatorHost(it) }
-            val firebaseOptionsBuilder = FirebaseOptions.builder().setCredentials(credentials).setProjectId(projectId)
-            FirebaseApp.initializeApp(firebaseOptionsBuilder.setFirestoreOptions(firestoreOptions.build()).build())
-        }
-        return FirestoreClient.getFirestore().collection(DATABASE_NAME)
+        hostAndPort?.let { firestoreOptionsBuilder.setEmulatorHost(it) }
+        return firestoreOptionsBuilder.build().service.collection(DATABASE_NAME)
     }
 }
