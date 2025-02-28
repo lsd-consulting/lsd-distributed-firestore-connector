@@ -5,6 +5,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
 
     // Other
+    testImplementation 'com.google.firebase:firebase-admin:9.4.3' // needed for emulator credentials
+    testImplementation 'com.google.cloud:spring-cloud-gcp-core'
     testImplementation 'ch.qos.logback:logback-core'
     testImplementation 'io.github.k-random:k-random-core:1.29.3'
     testImplementation 'io.kotest:kotest-assertions-core:5.9.1'
