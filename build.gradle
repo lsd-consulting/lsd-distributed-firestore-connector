@@ -45,7 +45,7 @@ apply plugin: 'io.spring.dependency-management'
 dependencyManagement {
     imports {
         mavenBom 'org.springframework.cloud:spring-cloud-dependencies:2025.0.0'
-        mavenBom 'com.google.cloud:spring-cloud-gcp-dependencies:6.2.2'
+        mavenBom 'com.google.cloud:spring-cloud-gcp-dependencies:7.4.0'
         mavenBom SpringBootPlugin.BOM_COORDINATES
     }
 }
