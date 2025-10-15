@@ -8,8 +8,8 @@ dependencies {
     implementation 'com.google.cloud:google-cloud-firestore'
 
     // LSD
-    api 'io.github.lsd-consulting:lsd-distributed-connector:2.1.7'
-    implementation 'io.github.lsd-consulting:lsd-logging-library:1.0.18'
+    api 'io.github.lsd-consulting:lsd-distributed-connector:2.1.10'
+    implementation 'io.github.lsd-consulting:lsd-logging-library:1.0.19'
 
     // Spring
     compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
