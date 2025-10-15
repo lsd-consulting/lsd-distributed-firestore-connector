@@ -11,15 +11,16 @@ plugins {
     id 'jacoco'
     id 'org.jetbrains.kotlin.jvm' version '2.2.0'
     id 'org.jetbrains.kotlin.plugin.spring' version '2.2.0'
+    id 'org.jetbrains.dokka-javadoc' version '2.0.0'
 }
 
 group = 'io.github.lsd-consulting'
 version = gitVersion().replaceAll('^v', '')
 println "Build Version = ${version}"
 
-sourceCompatibility = '17'
-targetCompatibility = '17'
-compileKotlin.kotlinOptions.jvmTarget = '17'
+kotlin {
+    jvmToolchain(17)
+}
 
 repositories {
     mavenLocal()

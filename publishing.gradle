@@ -13,9 +13,11 @@ tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allSource
 }
 
+// Configure the javadoc task to use Dokka
 tasks.register('javadocJar', Jar) {
     archiveClassifier.set('javadoc')
-    from javadoc
+    dependsOn dokkaGeneratePublicationJavadoc
+    from layout.buildDirectory.dir('dokka/javadoc')
 }
 
 artifacts {
@@ -31,7 +33,7 @@ publishing {
             artifactId = 'lsd-distributed-firestore-connector'
             version = "$version"
 
-            from components.java
+            from components.kotlin
             artifact sourcesJar
             artifact javadocJar
             pom {
