@@ -10,7 +10,7 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-core'
     testImplementation 'io.github.k-random:k-random-core:1.29.3'
     testImplementation 'io.kotest:kotest-assertions-core:5.9.1'
-    testImplementation 'io.mockk:mockk:1.13.16'
+    testImplementation 'io.mockk:mockk:1.14.6'
     testImplementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
