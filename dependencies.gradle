@@ -8,7 +8,7 @@ dependencies {
     implementation 'com.google.cloud:google-cloud-firestore'
 
     // LSD
-    api 'io.github.lsd-consulting:lsd-distributed-connector:2.2.2'
+    api 'io.github.lsd-consulting:lsd-distributed-connector:2.2.3'
     implementation 'io.github.lsd-consulting:lsd-logging-library:1.0.19'
 
     // Spring
