@@ -12,7 +12,7 @@ dependencies {
     testImplementation 'io.kotest:kotest-assertions-core:6.2.5'
     testImplementation 'io.mockk:mockk:1.14.11'
     testImplementation 'org.mockito:mockito-core:5.20.0'
-    testImplementation 'org.mockito.kotlin:mockito-kotlin:6.1.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:6.3.0'
     testImplementation 'org.apache.commons:commons-lang3'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
