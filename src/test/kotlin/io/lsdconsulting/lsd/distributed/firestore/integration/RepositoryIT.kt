@@ -9,6 +9,7 @@ import io.kotest.matchers.maps.shouldContainKey
 import io.kotest.matchers.shouldBe
 import io.lsdconsulting.lsd.distributed.connector.model.InteractionType.REQUEST
 import io.lsdconsulting.lsd.distributed.connector.model.InterceptedInteraction
+import io.lsdconsulting.lsd.distributed.firestore.testsupport.sampleInterceptedInteraction
 import io.lsdconsulting.lsd.distributed.firestore.integration.testapp.TestApplication
 import io.lsdconsulting.lsd.distributed.firestore.repository.*
 import org.apache.commons.lang3.RandomStringUtils.secure
@@ -73,7 +74,7 @@ internal class RepositoryIT {
         val traceId = secure().nextAlphanumeric(10)
         val createdAt = ZonedDateTime.now(ZoneId.of("UTC"))
         val interceptedInteraction =
-            kRandom.nextObject(InterceptedInteraction::class.java).copy(
+            sampleInterceptedInteraction().copy(
                 traceId = traceId,
                 createdAt = createdAt,
                 requestHeaders = mapOf(
@@ -105,7 +106,7 @@ internal class RepositoryIT {
         val traceId = secure().nextAlphanumeric(10)
         val interceptedInteractions = (1..10)
             .map { _ ->
-                kRandom.nextObject(InterceptedInteraction::class.java).copy(
+                sampleInterceptedInteraction().copy(
                     traceId = traceId,
                     createdAt = ZonedDateTime.now(ZoneId.of("UTC")).truncatedTo(MILLIS),
                 )

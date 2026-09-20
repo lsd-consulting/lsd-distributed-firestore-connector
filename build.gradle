@@ -9,8 +9,8 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '2.0.0'
     id 'com.palantir.git-version' version '4.3.0'
     id 'jacoco'
-    id 'org.jetbrains.kotlin.jvm' version '2.3.10'
-    id 'org.jetbrains.kotlin.plugin.spring' version '2.3.10'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.20'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.4.20'
     id 'org.jetbrains.dokka-javadoc' version '2.2.0'
 }
 
@@ -21,6 +21,15 @@ println "Build Version = ${version}"
 kotlin {
     jvmToolchain(17)
 }
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == "org.jetbrains.kotlin") {
+            details.useVersion("2.4.20")
+        }
+    }
+}
+
 
 repositories {
     mavenLocal()
