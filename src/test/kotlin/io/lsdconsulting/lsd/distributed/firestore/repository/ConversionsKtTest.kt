@@ -8,6 +8,7 @@ import io.kotest.matchers.maps.shouldMatchAll
 import io.kotest.matchers.shouldBe
 import io.lsdconsulting.lsd.distributed.connector.model.InteractionType
 import io.lsdconsulting.lsd.distributed.connector.model.InterceptedInteraction
+import io.lsdconsulting.lsd.distributed.firestore.testsupport.sampleInterceptedInteraction
 import org.apache.commons.lang3.RandomStringUtils.secure
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -25,7 +26,7 @@ internal class ConversionsKtTest {
     @ParameterizedTest
     @MethodSource("provideDurations")
     fun `should convert intercepted interaction to map`(duration: Duration) {
-        val interceptedInteraction = kRandom.nextObject(InterceptedInteraction::class.java).copy(
+        val interceptedInteraction = sampleInterceptedInteraction().copy(
             requestHeaders = mapOf(
                 "good1" to listOf(secure().nextAlphanumeric(10)),
                 "__bad1__" to listOf(secure().nextAlphanumeric(10))
