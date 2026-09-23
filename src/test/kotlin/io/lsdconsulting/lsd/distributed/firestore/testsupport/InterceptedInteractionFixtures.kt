@@ -7,8 +7,8 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 /**
- * Builds [InterceptedInteraction] without k-random reflection.
- * k-random 2.0.x breaks on Kotlin 2.4 reflect; newer k-random needs JVM 21.
+ * Builds [InterceptedInteraction] with stable defaults for assertions.
+ * (k-random 2.2.x is available on JVM 21 for randomized cases.)
  */
 fun sampleInterceptedInteraction(
     traceId: String = UUID.randomUUID().toString(),
