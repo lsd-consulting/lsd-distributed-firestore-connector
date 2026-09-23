@@ -19,7 +19,7 @@ version = gitVersion().replaceAll('^v', '')
 println "Build Version = ${version}"
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 configurations.configureEach {

@@ -93,7 +93,7 @@ internal class ConversionsKtTest {
         val httpMethod = "POST"
         val profile = secure().nextAlphabetic(5)
         val elapsedTime = kRandom.nextLong()
-        val createdAt = Timestamp.of(kRandom.nextObject(Date::class.java))
+        val createdAt = Timestamp.of(kRandom.nextObject(Date::class.java)!!)
         val map = mapOf(
             TRACE_ID to traceId,
             BODY to body,
@@ -158,7 +158,7 @@ internal class ConversionsKtTest {
 
     @Test
     fun `should convert zoned date time to gcp timestamp`() {
-        val zonedDateTime = kRandom.nextObject(ZonedDateTime::class.java)
+        val zonedDateTime = kRandom.nextObject(ZonedDateTime::class.java)!!
 
         val timestamp = zonedDateTime.toTimestamp()
 
@@ -167,7 +167,7 @@ internal class ConversionsKtTest {
 
     @Test
     fun `should convert gcp timestamp to zoned date time`() {
-        val timestamp = Timestamp.of(kRandom.nextObject(Date::class.java))
+        val timestamp = Timestamp.of(kRandom.nextObject(Date::class.java)!!)
 
         val zonedDateTime = timestamp.toZonedDateTime(ZoneId.of("UTC"))
 
