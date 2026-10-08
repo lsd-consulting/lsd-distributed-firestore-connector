@@ -9,7 +9,7 @@ dependencies {
 
     // LSD
     api 'io.github.lsd-consulting:lsd-distributed-connector:3.1.1'
-    implementation 'io.github.lsd-consulting:lsd-logging-library:3.0.0'
+    implementation 'io.github.lsd-consulting:lsd-logging-library:3.0.1'
 
     // Spring
     compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
